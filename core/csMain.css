@@ -1,0 +1,153 @@
+a:link    {color:inherit; background-color:transparent; text-decoration:underline}
+a:visited {color:inherit; background-color:transparent; text-decoration:underline}
+a:hover   {color:inherit; background-color:transparent; text-decoration:underline} 
+a:active  {color:inherit; background-color:transparent; text-decoration:underline}
+@font-face {
+  font-family: DroidSansMono;
+  src: url('./resources/DroidSansMono.ttf'); }
+@font-face {
+  font-family: Scriptina;
+  src: url('./resources/Scriptina-Pro.otf'); }
+@font-face {
+  font-family: AdobeBlank;
+  src: url('./resources/AdobeBlank.ttf'); }
+input:focus {
+  outline: none; }
+.nolink {
+  text-decoration: none; }
+.bgc {
+  background: rgba(1,1,1,0.99); /* #272727 */ }
+::selection {
+  background: rgba(95,95,95,0.36); /* WebKit/Blink Browsers */ }
+  
+body {
+  position: fixed;
+  overflow: hidden;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  background-color: rgba(23,39,45,1); }
+  body::-webkit-scrollbar { 
+    display: none; }
+
+#ctn {
+ position: absolute;
+ top: 0px;
+ left: 0px;
+ height: 100%;
+ width: 100%;
+}
+
+#map {
+ position: absolute;
+ height: 400px;
+ width: 400px;
+ top: 0px;
+ left: 0px;
+ background: rgba(1,45,1,0.4);
+ cursor: pointer;
+ user-select: none;
+}
+
+.unit {
+ font-family: 'SaxMono';
+ font-size: 10pt;
+ text-align: center; }
+
+#cds {
+ z-index: 9999;
+ position: fixed;
+ top: 0px;
+ right: 0px;
+ width: 140px;
+ height: 32px;
+ color: rgba(145,145,145,1);
+ background: rgba(15,15,15,0.75);
+ border: none; }
+
+#txt {
+ font-family: 'Lekton-Bold';
+ font-family: 11pt;
+ text-align: center;
+ line-height: 32px;
+ height: 100%;
+ width: 100%; }
+
+
+#zom {
+ position: absolute;
+ top: 0%;
+ left: -22px;
+ width: 22px;
+ height: 100%;
+ background: rgba(15,15,15,0.85); }
+
+#pls {
+ position: absolute;
+ top: 1px;
+ left: 1px;
+ width: 20px;
+ height: 15px; }
+
+#mns {
+ position: absolute;
+ bottom: 1px;
+ left: 1px;
+ width: 20px;
+ height: 15px; }
+
+.clicky {
+ font-family: 'Lekton-Bold';
+ font-size: 11pt;
+ font-color: rgba(145,145,145,1);
+ text-align: center;
+ line-height: 15px;
+ user-select: none;
+
+ cursor: pointer;
+ background: rgba(200,200,200,0.4);
+ border: none;
+ border-radius: 1px;
+ transition: all 430ms; }
+ .clicky:hover {
+  color: rgba(1,1,1,1);
+  background: rgba(200,200,200,0.6);
+ }
+
+
+@font-face {
+  font-family: CodeNewRoman;
+  src: url('./resources/Code-New-Roman.otf'); }
+@font-face {
+  font-family: SaxMono;
+  src: url('./resources/SaxMono.ttf'); }
+@font-face {
+  font-family: Aurulent;
+  src: url('./resources/AurulentSansMono-Regular.otf'); }
+@font-face {
+  font-family: Lekton;
+  src: url('./resources/Lekton-Regular.ttf'); }
+@font-face {
+  font-family: LektonBold;
+  src: url('./resources/Lekton-Bold.ttf'); }
+@font-face {
+  font-family: Camingo;
+  src: url('./resources/CamingoCode-Regular.ttf'); }
+@font-face {
+  font-family: Fantasque;
+  src: url('./resources/fantasquesansmono-regular.otf'); }
+@font-face {
+  font-family: SpaceMono;
+  src: url('./resources/SpaceMono-Regular.ttf'); }
+@font-face {
+  font-family: Ubuntu;
+  src: url('./resources/UbuntuMono-R.ttf'); }
+
+.timestamp {
+ font-family: 'AdobeBlank'; }
+
+.hidden {
+  display: none; }
+
+.dev {
+  border: 1px solid rgba(1,1,255,1); }

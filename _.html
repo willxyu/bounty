@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html><meta charset="utf-8">
+ <head><title>Achaea Sailing Map 2.0</title>
+  <link rel='icon' type='image/png' href='./core/resources/ship2.png' />
+  <script src='./core/extlib/jquery-3.1.1.js'></script>
+  <script src='./core/extlib/d3.v4.min.js'></script>
+  <script src='./core/extlib/topojson.js'></script>
+  <script src='./core/extlib/jquery.simulate.js'></script>
+  <script src='./core/extlib/jquery.simulate.ext.js'></script>
+  <script src='./core/extlib/jquery.simulate.drag-n-drop.js'></script>
+  <script src='mps.js'></script>
+  <script src='./data/data.se.0.js''></script>
+  <script src='./data/data.se.1m.js''></script>
+  <script src='./data/data.se.2m.js''></script>
+  <script src='./data/data.se.3m.js''></script>
+  <script src='./data/data.se.4m.js''></script>
+  <script src='./data/data.se.5m.js''></script>
+  <script src='./data/data.se.6m.js''></script>
+  <script src='./data/data.se.7m.js''></script>
+  <script src='./data/data.se.8m.js''></script>
+  <script src='./data/data.se.9m.js''></script>
+  <script src='./data/data.se.10m.js''></script>
+  <script src='./data/data.se.11m.js''></script>
+  <script src='./data/data.se.12m.js''></script>
+  <script src='./data/data.se.13m.js''></script>
+  <script src='./data/data.se.14m.js''></script>
+  <script src='./data/data.se.15m.js''></script>
+  <script src='./data/data.se.16m.js''></script>
+  <script src='./data/data.se.17m.js''></script>
+  <script src='./data/data.se.18m.js''></script>
+  <script src='./data/data.se.19m.js''></script>
+  <script src='./data/data.se.20m.js''></script>
+  <script src='./data/data.se.21m.js''></script>
+  <script src='./data/data.se.22m.js''></script>
+  <script src='./data/data.se.23m.js''></script>
+  <script src='./data/data.se.24m.js''></script>
+  <script src='./data/data.sw.0.js''></script>
+  <script src='./data/data.sw.1m.js''></script>
+  <script src='./data/data.sw.2m.js''></script>
+  <script src='./data/data.sw.3m.js''></script>
+  <script src='./data/data.sw.4m.js''></script>
+  <script src='./data/data.sw.5m.js''></script>
+  <script src='./data/data.sw.6m.js''></script>
+  <script src='./data/data.sw.7m.js''></script>
+  <script src='./data/data.sw.8m.js''></script>
+  <script src='./data/data.sw.9m.js''></script>
+  <script src='./data/data.sw.10m.js''></script>
+  <script src='./data/data.sw.11m.js''></script>
+  <script src='./data/data.sw.12m.js''></script>
+  <script src='./data/data.sw.13m.js''></script>
+  <script src='./data/data.sw.14m.js''></script>
+  <script src='./data/data.sw.15m.js''></script>
+  <script src='./data/data.sw.16m.js''></script>
+  <script src='./data/data.sw.17m.js''></script>
+  <script src='./data/data.sw.18m.js''></script>
+  <script src='./data/data.sw.19m.js''></script>
+  <script src='./data/data.sw.20m.js''></script>
+  <script src='./data/data.sw.21m.js''></script>
+  <script src='./data/data.sw.22m.js''></script>
+  <script src='./data/data.sw.23m.js''></script>
+  <script src='./data/data.sw.24m.js''></script>
+  <script src='./data/data.sw.25m.js''></script>
+  <script src='./data/data.sw.26m.js''></script>
+  <script src='./data/data.sw.27m.js''></script>
+  <script src='./data/data.ne.1.js''></script>
+  <script src='./data/data.ne.2.js''></script>
+  <script src='./data/data.ne.3.js''></script>
+  <script src='./data/data.ne.4.js''></script>
+  <script src='./data/data.ne.5.js''></script>
+  <style>
+document, body { padding: none; margin: none; background: rgba(14,14,104,0.24); }
+#coords { position: absolute; z-index: 100; top: 0px; right: 0px; width: 140px; height: 32px;
+ color: rgba(145,145,145,1); background: rgba(15,15,15,0.75); border: none; border-left: 2px solid rgba(212,212,2121,1); border-bottom: 2px solid rgba(212,212,2121,1); border-radius: 4px; }
+#text { font-size: 11pt; text-align: center; line-height: 32px; height: 100%; width: 100%; }
+#leader {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:3px solid rgba(255,122,122,1);border-radius:450%; }
+#tracer-x {left:0px;height:1px;width:100%;z-index:-15;}
+#tracer-y { top:0px;width:1px;height:100%;z-index:-15;}
+.tracer {position:absolute;background:rgba(214,14,14,1);}
+.hidden { display: none; }
+#tooltip {padding: 0.4em; background: rgba(1,1,1,0.4); border: none; border-radius: 5px; color: rgba(200,200,200,1); }
+canvas {
+ /* border: 1px solid rgba(45,45,45,1); */
+ background: rgba(20,60,135,0.67);
+ position: absolute;
+ left: 50%;
+ top: 50%;
+ transform: translate(-50%,-50%);
+}
+  </style>
+ </head>
+   <canvas id="map" width=960" height="500"></canvas>
+   <div id="coords">
+   <div id="text"></div> </div>
+   <div id="tracer-x" class="tracer hidden"></div>
+   <div id="tracer-y" class="tracer hidden"></div>
+   <!-- <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div> -->
+<script>
+
+
+// options
+opt_maximal     = true                 // scale to window
+opt_tracer      = false                // tracer for logging coordinates/widths & crosshairs
+opt_unitWidth   = 4
+opt_unitHeight  = 7
+opt_hoverRadius = 6
+
+opt_test       = false
+opt_testQuant  = 200
+
+// helper functions
+clean       = function(n) { var x = Number(n.replace(/[^-\d\.]/g, '')); return x }
+copy = function(obj) { var c; if (null == obj || 'object' != typeof obj) return obj; if (obj instanceof Date) { c = new Date(); c.setTime(obj.getTime()); return c }; if (obj instanceof Array) { c = []; for (var i=0;i<obj.length;i++) { c[i] = copy(obj[i]) }; return c }; if (obj instanceof Object) { c = {}; for (var attr in obj) { if (obj.hasOwnProperty(attr)) { c[attr] = copy(obj[attr]) } }; return c }; throw new Error('Unable to copy obj! Type not supported.'); }
+log         = console.log
+
+// helper variables
+var_json       = {}
+var_hovering   = false
+var_hoverRange = {}
+
+  var portList = [{name: 'Aalen',         x: -1000, y:-1000},
+                  {name: 'Ageiro',        x:   -81, y:   19},
+                  {name: 'Ashtan',        x: -1000, y:-1000},
+                  {name: 'Colchis',       x: -1000, y:-1000},
+                  {name: 'Clockwork Isle',x: -1000, y:-1000},
+                  {name: 'Eastern Shore', x: -1000, y:-1000},
+                  {name: 'Eirenwaar',     x: -1000, y:-1000},
+                  {name: 'Harae',         x: -1000, y:-1000},
+                  {name: 'Ilyrean',       x: -1000, y:-1000},
+                  {name: 'Karbaz',        x: -1000, y:-1000},
+                  {name: 'Lothos',        x: -1000, y:-1000},
+                  {name: 'Minos',         x: -1000, y:-1000},
+                  {name: 'Mysia',         x: -1000, y:-1000},
+                  {name: 'New Hope',      x: -1000, y:-1000},
+                  {name: 'Orilla',        x: -1000, y:-1000},
+                  {name: 'Polyargos',     x: -1000, y:-1000},
+                  {name: 'Prin',          x: -1000, y:-1000},
+                  {name: 'Riparium',      x: -1000, y:-1000},
+                  {name: 'Sea Lion Cove', x: -1000, y:-1000},
+                  {name: 'Shala-Khulia',  x: -1000, y:-1000},
+                  {name: 'Shastaan',      x: -1000, y:-1000},
+                  {name: 'Ship Arena Island',x: -1000,y:-1000},
+                  {name: 'Suliel',        x: -1000, y:-1000},
+                  {name: 'Tapoa',         x: -1000, y:-1000},
+                  {name: "Tasur'ke",      x: -1000, y:-1000},
+                  {name: 'Thraasi',       x: -1000, y:-1000},
+                  {name: 'Tuar',          x: -1000, y:-1000},
+                  {name: 'Ulangi',        x: -1000, y:-1000},
+                  {name: 'Umbrin',        x: -1000, y:-1000},
+                  {name: 'Valho',         x: -1000, y:-1000},
+                  {name: 'Zanzibaar',     x: -1000, y:-1000},
+                  {name: 'Zaphar',        x: -1000, y:-1000},]
+
+  var jsondata = {
+   type: 'Topology',
+   transform: {
+     scale: [opt_unitWidth,opt_unitHeight],
+     translate: [0,0],
+   },
+   arcs: [
+     [[-0.5,-0.5],[0,1],[1,0],[0,-1],[-1,0]],
+     [[42.5,-5.5],[0,1],[1,0],[0,-1],[-1,0]], // Sea Lion Cove
+     // Shala-Khulia island
+     [[ 1.5,-0.5],[0,2],[1,0],[0,1],[1,0],[0,1],[5,0],
+      [0,1],[6,0],[0,-1],[1,0],[0,-2],[1,0],[0,-2],[1,0],[0,-1],[1,0],[0,-1],
+      [2,0],[0,-1],[1,0],[0,-2],[1,0],
+      [0,-12],[-1,0],[0,-7],[1,0],[0,-5],[1,0],[0,-6],[-1,0],[0,-2],[1,0],[0,-5],[-1,0],
+      [0,-5],[-1,0],[0,-2],[-1,0],[0,-1],[-1,0],[0,-1],[-2,0],[0,-1],[-2,0],[0,1],[-2,0],
+      [0,1],[-1,0],[0,-1],[-2,0],[0,1],[-2,0],[0,1],[-1,0],[0,2],[-1,0],[0,3],[1,0],
+      [0,2],[1,0],[0,4],[-1,0],[0,2],[-1,0],[0,1],[-1,0],[0,1],[-1,0],[0,1],[-2,0],[0,1],[-1,0],[0,2],
+      [-1,0],[0,2],[-1,0],[0,1],[-1,0],[0,1],[-2,0],[0,-1],[-4,0],[0,1],[-1,0],[0,1],
+      [-1,0],[0,3],[1,0],[0,2],[-1,0],[0,1],[-1,0],[0,1],[-4,0],[0,1],[-1,0],[0,1],
+      [-1,0],[0,1],[-1,0],[0,4],[1,0],[0,1],[2,0],[0,1],[1,0],[0,3],[-1,0],[0,4],[1,0],[0,1],
+      [ 3,0],[0,1],[ 2,0],[0,1],[ 1,0],[0,1],[ 2,0],[0,1],[ 1,0],[0,2],[1,0],[0,1],[2,0],
+      [ 0,1],[3,0],[0,-3],
+      [-1,0],[0,-2],[-1,0],[0,1],[-1,0],[0,-1],[1,0],[0,-1],[-2,0],
+     ],
+     [[-0.5, 0.5],[-2,0],[0,-1],[-1,0],[0,-2],[-1,0],[0,-1],[-1,0],
+      [0,-3],[-1,0],[0,-1],[-1,0],[0,-2],[-1,0],
+      [0,-4],[1,0],[0,-1],[1,0],[0,-2],[1,0],[0,-1],[2,0],[0,-1],[1,0],
+      [0,-2],[1,0],[0,-1],[1,0],[0,-1],[2,0],[0,-1],[1,0],[0,-2],[5,0],
+      [0,1],[6,0],[0,1],[1,0],
+      // bridge for now
+      [1,0],[1,0], // end bridge
+      [0,2],[1,0],[0,1],[1,0],[0,6],[1,0],[0,6],
+      [-1,0],[0,3],[-2,0],[0,1],[-1,0],[0,1],[-2,0],[0,1],[-2,0],[0,1],[-2,0],
+      // bridge for now
+      [-1,0], [-2,0], // end bridge
+     ],
+     [[ 6.5,-1.5],[-1,0], // end bridge
+      [0,-1],[-1,0],[0,-1],[-2,0],[0,1],[-2,0],[0,2],[1,0],],
+
+     [[ 0.5,-0.5],[0,1],[1,0],[0,-1],[-1,0]],
+     [[ 0.5,-0.5],[0,-2],[2,0],[0,-1],[2,0],[0,1],[1,0],[0,1],[1,0],],
+     [[ 6.5,-1.5],[0,-2],[-1,0],[0,-1],[-2,0],[0,-1],[-3,0],[0,1],[-1,0],[0,2],[-1,0],[0,2],[2,0],],
+
+     [[-0.5,-0.5],[-1,0],[0,-2],[1,0],[0,-2],[1,0],[0,-1],[3,0],[0,1],[2,0],[0,1],
+      [1,0],[0,2],[5,0],[0,-1],[2,0],[0,-1],[2,0],[0,-1],[1,0],[0,-1],[2,0],[0,-3],[1,0],[0,-6],
+      [-1,0],[0,-6],[-1,0],[0,-1],[-1,0],[0,-2],[-3,0],[0,-1],[-6,0],[0,-1],[-5,0],
+      [0,2],[-1,0],[0,1],[-2,0],[0,1],[-1,0],[0,1],[-1,0],[0,2],[-1,0],[0,1],
+      [-2,0],[0,1],[-1,0],[0,2],[-1,0],[0,1],[-1,0],[0,4],[1,0],[0,2],[1,0],[0,1],[1,0],
+      [0,3],[1,0],[0,1],[1,0],[0,2],[1,0],[0,1],[2,0],[0,1],
+      ],
+
+     // MORE REEF
+     [[-25.5,-16.5],[0,-1],[1,0],[0,-3],[1,0],[0,-3],[1,0],[0,-1],[1,0],[0,-1],[3,0],
+      [0,-1],[1,0],[0,-1],[1,0],[0,-3],[1,0],[0,-5],[-1,0],[0,-1],[-3,0],[0,-1],[-2,0],
+      [0,-1],[-7,0],[0,1],[-2,0],[0,1],[-3,0],[0,1],[-1,0],[0,1],[-1,0],[0,1],[-1,0],
+      [0,5],[1,0],[0,1],[1,0],[0,1],[1,0],[0,1],[1,0],[0,2],[1,0],[0,2],[1,0],[0,2],
+      [1,0],[0,1],[1,0],[0,1],[1,0],[0,1],[2,0],
+     ],
+     // MORE SWAMP
+     [[-26.5,-18.5],[0,-1],[1,0],[0,-4],[1,0],[0,-3],[1,0],[0,-1],[2,0],[0,-1],[1,0],[0,-1],[2,0],
+      [0,-2],[1,0],[0,-3],[-2,0],[0,-1],[-1,0],[0,-1],[-2,0],[0,1],[-1,0],[0,-1],[-4,0],
+      [0,1],[-3,0],[0,1],[-2,0],[0,1],[-1,0],[0,1],[-1,0],[0,3],[2,0],[0,1],[1,0],
+      [0,1],[1,0],[0,1],[1,0],[0,2],[-1,0],[0,1],[1,0],[0,2],[1,0],[0,1],[1,0],[0,2],[1,0],
+     ],
+     /*
+     [[-0.5,-0.5],[-1,0],[0,-2],[1,0],[0,-2],[1,0],[0,-1],[3,0],[0,1],[2,0],[0,1],[1,0],
+      [0,2],
+      // bridge
+      [2,0],[1,0],[2,0], // end bridge
+      [0,-1],[2,0],[0,-1],[2,0],[0,-1],[1,0],[0,-1],[2,0],[0,-3],[1,0],[0,-6],
+     ], */
+/*
+     [[-0.5,-0.5],[0,1],[1,0],[0,-1],[-1,0]],
+     [[0,-0.5],[0.5,0.5],[-0.5,0.5],[-0.5,-0.5],[0.5,-0.5],],
+     [[0,-1],[1,0],[1,1],[1,-1],[1,0],[1,1],[1,0],[2,2],[0,1],
+      [1,1],[0,1],[2,0],[1,-1],[1,1],[3,0],[7,7],[1,0],[1,-1],
+      [6,0],[1,1],[1,-1],[1,1],[1,0],[1,-1],[2,0],[1,1],[1,-1],
+      [0,-4],[1,-1],[0,-4],[1,-1],[1,-1],[-1,-1],[0,-1],[1,-1],
+      [-1,-1],[0,-2],[-40,0],], */
+   ],
+   objects: {
+    ports:  {
+     type: 'GeometryCollection',
+     geometries: [
+      {type: 'Polygon',arcs:[[0]],id:'SK',properties:{name:'Shala-Khulia',},},
+      {type: 'Polygon',arcs:[[1]],id:'SL',properties:{name:'Sea Lion Cove',},},
+     ],
+    },
+    reefs:  {
+     type: 'GeometryCollection',
+     geometries: [
+      {type: 'Polygon',arcs:[[2,3,4]],id:'MP-SK'},
+      {type: 'Polygon',arcs:[[9]],id:'MP-SK'},
+     ],
+    },
+    chops:  {
+
+    },
+    roughs: {
+
+    },
+    marsh:  {
+     type: 'GeometryCollection',
+     geometries: [
+      {type: 'Polygon',arcs:[[5,6,7]],id:'MP-SK'},
+     ],
+    },
+    grass:   {
+     type: 'GeometryCollection',
+     geometries: [
+      {type: 'Polygon', arcs:[[8]],id:'GL-SK'},
+      {type: 'Polygon', arcs:[[10]],id:'GL-SK'},
+     ],
+    },
+   },
+  }
+
+  var initialLength = jsondata.objects.ports.geometries.length
+  generatePort = function(name,x,y) {
+    y = y * -1
+    jsondata.arcs.push([[-0.5 + x,-0.5 + y],[0,1],[1,0],[0,-1],[-1,0]])
+    jsondata.objects.ports.geometries.push({
+      type: 'Polygon', id: name, properties: {name: name},
+      arcs: [
+       [(initialLength + 1)]
+      ]
+    })
+  }
+  for (var k=0;k<portList.length;k++) {
+   var t = portList[k]
+   generatePort(t.name, t.x, t.y)
+  }
+  var_json = copy(jsondata)
+
+/*
+   ON LOAD
+   ON LOAD
+   ON LOAD
+ */
+$(window).on( 'load', function() {
+ var t = mps.complete()
+ log(t)
+ log(var_json)
+
+ // $('body').append('<div id="leader"></div>')           // mark the leader
+zoom = function() {
+  var context  = canvas.node().getContext('2d')
+  context.clearRect(0, 0, width, height)
+  draw(d3.event.transform) 
+}
+
+var canvas   = d3.select('canvas').call(d3.zoom().scaleExtent([1 / 50, 1500]).on('zoom', zoom))
+var context  = canvas.node().getContext('2d')
+    if (opt_maximal) {
+    context.canvas.width = window.innerWidth
+    context.canvas.height = window.innerHeight } // only AFTER window has loaded, for accurate positioning
+var width    = canvas.property('width')
+var height   = canvas.property('height')
+var n   = document.getElementById('map').getBoundingClientRect() // !NOTE: #map
+$('#coords').css('top', n.top).css('right', n.left) // weird like
+
+var randomX  = d3.randomNormal( width / 2, 80 )
+var randomY  = d3.randomNormal( height / 2, 80 )
+var data     = d3.range(2000).map( function() { return [ randomX(), randomY() ] } )
+
+draw = function(transform) {
+ var r = d3.zoomTransform(d3.select('canvas').node())
+
+ // grid it up
+ context.beginPath()
+ tracer = true
+ var n = 447 // pixels, not units; change the loops if you want to use unitwidths
+ var frequency = 1
+ switch (true) {
+  case (r.k < 0.05): frequency = 100; break;
+  case (r.k < 0.15): frequency = 50; break;
+  case (r.k < 0.35): frequency = 20; break;
+  case (r.k < 0.8): frequency = 10; break;
+  case (r.k < 3):   frequency = 5;  break;
+  default: frequency = 1; break;
+ }
+ // Horizontals, can't just simply slap a grid on if you're building a cartesian reader
+ //  any horizontals can do, but we have to make sure the zero_zero lands smack in the middle of two horizontals
+ //  therefore, we generate the starting point of the NE quadrant like so
+ //  forced to generate in sequence
+ var belowMe = Math.floor(opt_unitHeight / 2)
+ for (var DTU=(0); DTU>-n; DTU -= (opt_unitHeight * frequency)) {
+  var j = DTU + belowMe // weird like
+  var strt  = transform.apply([-n, j])
+  var fins  = transform.apply([n, j])
+  context.moveTo(strt[0], strt[1])
+  context.lineTo(fins[0], fins[1]) }
+ // Lower Hemi
+ for (var UTD=(0); UTD<n; UTD += (opt_unitHeight * frequency)) {
+  var j = UTD + belowMe // weird like
+  var strt  = transform.apply([-n, j])
+  var fins  = transform.apply([n, j])
+  context.moveTo(strt[0], strt[1])
+  context.lineTo(fins[0], fins[1]) }
+
+ // Similarly for the verticals
+ //  we generate the Right Hemi first
+ var leftOfMe = Math.floor(opt_unitWidth / 2)
+ for (var LTR=(0); LTR<n; LTR += (opt_unitWidth * frequency)) {
+  var j = LTR - leftOfMe // weird like
+  var strt  = transform.apply([j, -n])
+  var fins  = transform.apply([j,  n])
+  context.moveTo(strt[0], strt[1])
+  context.lineTo(fins[0], fins[1]) }
+ // Left Hemi
+ for (var RTL=(0); RTL>-n; RTL -= (opt_unitWidth * frequency)) {
+  var j = RTL - leftOfMe // weird like
+  var strt  = transform.apply([j, -n])
+  var fins  = transform.apply([j,  n])
+  context.moveTo(strt[0], strt[1])
+  context.lineTo(fins[0], fins[1]) }
+
+ context.lineWidth = 1;
+ context.strokeStyle='rgba(155,155,155,0.85)';
+ context.strokeStyle='rgba( 15, 35, 75,0.45)';
+ context.stroke();
+
+ // Finally, render map
+ // scale & translate map's json
+ context.closePath()
+ context.beginPath()
+ context.lineWidth = 0.7;
+ context.strokeStyle='rgba(1,1,1,1)';
+ var path   = d3.geoPath().context(context)
+ var_json.transform.scale = [ opt_unitWidth * r.k, opt_unitHeight * r.k ]
+ var_json.transform.translate = transform.apply([0,0])
+
+ // PORTS
+ var loops = topojson.feature(var_json, var_json.objects.ports).features
+ for (var i=0;i<loops.length;i++) {
+  // path( loops[i].geometry )
+ }
+ /*
+ path( topojson.mesh( var_json ) ) */
+ context.stroke()
+ context.fillStyle='rgba(150,115,50,0.75)';
+ context.fill()
+ context.closePath()
+ 
+ // REEFS
+ context.beginPath()
+ var path   = d3.geoPath().context(context)
+ var_json.transform.scale = [ opt_unitWidth * r.k, opt_unitHeight * r.k ]
+ var_json.transform.translate = transform.apply([0,0])
+ var loops = topojson.feature(var_json, var_json.objects.reefs).features
+ for (var i=0;i<loops.length;i++) {
+  path( loops[i].geometry )
+ }
+ context.stroke()
+ context.fillStyle='rgba(100,130,180,0.75)';
+ context.fill()
+ context.closePath()
+
+ // MARSH
+ context.beginPath()
+ var path   = d3.geoPath().context(context)
+ var_json.transform.scale = [ opt_unitWidth * r.k, opt_unitHeight * r.k ]
+ var_json.transform.translate = transform.apply([0,0])
+ var loops = topojson.feature(var_json, var_json.objects.marsh).features
+ for (var i=0;i<loops.length;i++) {
+  path( loops[i].geometry )
+ }
+ context.stroke()
+ context.fillStyle='rgba( 50,160,155,0.75)';
+ context.fill()
+ context.closePath()
+
+ // GRASS
+ context.beginPath()
+ var path   = d3.geoPath().context(context)
+ var_json.transform.scale = [ opt_unitWidth * r.k, opt_unitHeight * r.k ]
+ var_json.transform.translate = transform.apply([0,0])
+ var loops = topojson.feature(var_json, var_json.objects.grass).features
+ for (var i=0;i<loops.length;i++) {
+  path( loops[i].geometry )
+ }
+ context.stroke()
+ context.fillStyle='rgba( 65,150, 65,0.75)';
+ context.fill()
+ context.closePath()
+
+ // mark 0,0
+ var zz = [0,0]
+     zz = transform.apply(zz)
+ context.beginPath()
+ context.moveTo(zz[0], zz[1])
+ context.arc(zz[0], zz[1], opt_hoverRadius, 0, 2 * Math.PI)
+ context.fillStyle='rgba(190,100, 55,1)';
+ context.fill()
+ context.closePath()
+}
+
+  draw(d3.zoomIdentity)
+  $(document).on( 'mousemove', fnc_mousemove)
+
+  // now translate
+ var leftWindow = $(window).width()
+ var topWindow = $(window).height()
+ var leftDrag = leftWindow / 2
+ var topDrag  = topWindow / 2
+ $('#map').simulate("drag-n-drop", {dx: leftDrag, dy: topDrag});
+})
+
+
+fnc_mousemove = function(e) {
+  var s =  'Cursor position: x '+ e.clientX+', '+e.clientY
+  var f = document.getElementById('map').getBoundingClientRect()
+  // var n = document.getElementById('map-inner').getBoundingClientRect()
+  var r = d3.zoomTransform(d3.select('canvas').node())
+  if (opt_tracer) {
+  $('.tracer').removeClass('hidden')
+  $('#tracer-x').css('top',e.clientY)
+  $('#tracer-y').css('left',e.clientX)
+  // This value is static in semantic zoom
+  s = s + ', #map top (orig): ' + f.top
+  // regardless of zoom, this returns the pixels of the highest point on the SVG (the grid for now) from the border
+  //   of the SVG
+  // s = s + ', #map-inner top: ' + n.top
+  // unzoomed, this tells us where zero_zero is in relation to the border
+  s = s + ', (0,0) top: '+r.y
+  // therefore, our untransformed y = e.clientY - f.top - r.y
+  }
+  var y = e.clientY - f.top - r.y;  y = Math.round(y / (opt_unitHeight * r.k)) * -1
+  var x = e.clientX - f.left - r.x; x = Math.round(x / (opt_unitWidth * r.k))
+  $('#text').text(' X : '+x+' | Y : '+y)
+  //log(s)
+
+  //remove tooltip if not hovering over hoverable
+  if (var_hovering) {
+   var range = var_hoverRange
+   if (e.clientY < range.minY || e.clientY > range.maxY || e.clientX < range.minX || e.clientX > range.maxX) {
+    var_hovering   = false
+    var_hoverRange = {}
+    $('#tooltip').remove()
+    $('canvas').css('cursor','default')
+   }
+  }
+
+  // scan for hitting hoverables
+  // for hitboxes in hittables do
+  // calculate zz hitbox
+  var range = {}
+  range.minX = 0
+  range.maxX = 100
+  range.minY = 0
+  range.minY = 100
+  
+  // range for Shala-Khulia being 0,0
+  range.minX = r.x - opt_hoverRadius
+  range.maxX = r.x + opt_hoverRadius
+  range.minY = r.y - opt_hoverRadius
+  range.maxY = r.y + opt_hoverRadius
+
+  var_hoverRange = copy(range)
+  if (e.clientY >= range.minY && e.clientY <= range.maxY) {
+   if (e.clientX >= range.minX && e.clientX <= range.maxX) {
+    $('canvas').css('cursor','pointer')
+    var_hovering = true
+    // lookup text
+    $('#tooltip').remove()
+    var d = ''
+    d += '<div id="tooltip" style="position: absolute; left: '+(e.clientX+15)+'px; top: '+(e.clientY-15)+'px;">'
+    d += 'Shala-Khulia'
+    // look up trades
+    // 3 glass for 2 incense
+    d += '<div class="trade" style="white-space:pre-wrap;">  <span style="color:rgba(255,255,255,1);">3</span> <span style="color:rgba(150,180,230,1);">glass</span> for <span style="color:rgba(255,255,255,1);">2</span> <span style="color:rgba(205,45,100,1);">incense</span></div>'
+    d += '</div>'
+    $('body').append(d)
+   }
+  }
+
+}
+
+/* Performance Testing
+  if (opt_test) {
+  var testQuant = opt_testQuant || 200
+  var initialLength = jsondata.objects.ports.geometries.length
+  for (var i=0;i<testQuant;i++) {
+    var randX = Math.floor((Math.random() * 200) + 1)
+    var randY = Math.floor((Math.random() * 200) + 1) * -1
+    jsondata.arcs.push([[-0.5 + randX,-0.5 + randY],[0,1],[1,0],[0,-1],[-1,0]])
+    jsondata.objects.ports.geometries.push({
+      type: 'Polygon', id:'test', properties: {name: 'test'},
+      arcs: [
+       [(i + initialLength)]
+      ]
+    })
+  }
+  }
+*/
+
+</script>
